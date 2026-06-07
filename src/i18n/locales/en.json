@@ -2,10 +2,29 @@
   "common": {
     "app_name": "UrbanFlow"
   },
+  "header": {
+    "sign_in": "Sign in"
+  },
   "home": {
-    "welcome": "Welcome to UrbanFlow."
+    "hero_title": "Where are you heading today?",
+    "hero_subtitle": "Find the fastest route, browse lines and stops in real time.",
+    "from_placeholder": "From",
+    "to_placeholder": "To",
+    "search": "Find my route",
+    "explore": "Explore the network",
+    "lines_title": "Lines",
+    "lines_description": "All network lines",
+    "stops_title": "Stops",
+    "stops_description": "Find a nearby stop",
+    "calendar_title": "Schedule",
+    "calendar_description": "Departure times",
+    "incidents_title": "Incidents",
+    "incidents_description": "Ongoing disruptions",
+    "favorites_title": "Save your trips",
+    "favorites_description": "Sign in to keep your favorite lines and stops."
   },
   "not_found": {
-    "title": "Page not found"
+    "title": "Page not found",
+    "back_home": "Back to home"
   }
 }

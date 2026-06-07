@@ -1,5 +1,3 @@
-// Thin fetch wrapper around the gateway. No refresh logic yet — TODO when the refresh endpoint is wired.
-
 const API_URL = import.meta.env.VITE_API_URL ?? ''
 const TOKEN_STORAGE_KEY = 'uf_token'
 

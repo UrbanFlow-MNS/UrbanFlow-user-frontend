@@ -1,5 +1,7 @@
-// TODO: wire to real auth flow (login/logout via gateway, persist token, refresh, etc.)
-// This is a skeleton — components can already import { useAuth } and rely on the shape.
+// TODO: brancher le retour du auth-frontend + refresh + decode user
+
+const AUTH_FRONTEND_URL = import.meta.env.VITE_AUTH_FRONTEND_URL ?? 'http://localhost:5173'
+const TOKEN_KEY = 'uf_token'
 
 export interface AuthUser {
   id: string
@@ -10,21 +12,24 @@ export interface UseAuthReturn {
   user: AuthUser | null
   token: string | null
   isAuthenticated: boolean
-  login: (email: string, password: string) => void
+  login: () => void
   logout: () => void
 }
 
 export function useAuth(): UseAuthReturn {
-  // TODO: read token from localStorage, decode/fetch user, expose real handlers
+  const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null
+
   return {
-    user: null,
-    token: null,
-    isAuthenticated: false,
+    user: null, // TODO: GET /api/user/me (endpoint à ajouter côté gateway)
+    token,
+    isAuthenticated: !!token,
     login: () => {
-      // TODO: POST to gateway /auth/login, store token in localStorage, update state
+      const redirect = encodeURIComponent(window.location.href)
+      window.location.href = `${AUTH_FRONTEND_URL}/login?app=user&redirect=${redirect}`
     },
     logout: () => {
-      // TODO: clear localStorage token + cached user, redirect to /login
+      localStorage.removeItem(TOKEN_KEY)
+      window.location.reload()
     },
   }
 }

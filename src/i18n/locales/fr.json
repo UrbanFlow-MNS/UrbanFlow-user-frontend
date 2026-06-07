@@ -2,10 +2,29 @@
   "common": {
     "app_name": "UrbanFlow"
   },
+  "header": {
+    "sign_in": "Se connecter"
+  },
   "home": {
-    "welcome": "Bienvenue sur UrbanFlow."
+    "hero_title": "Où allez-vous aujourd'hui ?",
+    "hero_subtitle": "Trouvez le trajet le plus rapide, consultez les lignes et les arrêts en temps réel.",
+    "from_placeholder": "Départ",
+    "to_placeholder": "Arrivée",
+    "search": "Trouver mon itinéraire",
+    "explore": "Explorer le réseau",
+    "lines_title": "Lignes",
+    "lines_description": "Toutes les lignes du réseau",
+    "stops_title": "Arrêts",
+    "stops_description": "Trouver un arrêt proche",
+    "calendar_title": "Horaires",
+    "calendar_description": "Horaires de passage",
+    "incidents_title": "Incidents",
+    "incidents_description": "Perturbations en cours",
+    "favorites_title": "Sauvegardez vos trajets",
+    "favorites_description": "Connectez-vous pour retrouver vos lignes et arrêts favoris."
   },
   "not_found": {
-    "title": "Page introuvable"
+    "title": "Page introuvable",
+    "back_home": "Retour à l'accueil"
   }
 }
