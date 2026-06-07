@@ -1,0 +1,11 @@
+{
+  "common": {
+    "app_name": "UrbanFlow"
+  },
+  "home": {
+    "welcome": "Bienvenue sur UrbanFlow."
+  },
+  "not_found": {
+    "title": "Page introuvable"
+  }
+}
