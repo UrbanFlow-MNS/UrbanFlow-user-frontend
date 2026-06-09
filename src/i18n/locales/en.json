@@ -23,6 +23,25 @@
     "favorites_title": "Save your trips",
     "favorites_description": "Sign in to keep your favorite lines and stops."
   },
+  "plan": {
+    "title": "Route",
+    "from": "From",
+    "to": "To",
+    "edit": "Edit",
+    "loading": "Finding the fastest route…",
+    "empty_title": "No route requested",
+    "empty_subtitle": "Enter a starting point and destination from the home page",
+    "auth_required_title": "Sign in required",
+    "auth_required_subtitle": "This feature requires an account for now",
+    "error_title": "Error",
+    "error_retry": "Retry",
+    "geocoding_pending_title": "Geocoding unavailable",
+    "geocoding_pending_subtitle": "Address geocoding will be connected soon",
+    "geocoding_try_demo": "Try with demo coordinates",
+    "duration_total": "Total duration",
+    "departure": "Departure",
+    "arrival": "Arrival"
+  },
   "not_found": {
     "title": "Page not found",
     "back_home": "Back to home"

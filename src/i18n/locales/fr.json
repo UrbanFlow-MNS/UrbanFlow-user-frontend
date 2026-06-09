@@ -23,6 +23,25 @@
     "favorites_title": "Sauvegardez vos trajets",
     "favorites_description": "Connectez-vous pour retrouver vos lignes et arrêts favoris."
   },
+  "plan": {
+    "title": "Itinéraire",
+    "from": "Départ",
+    "to": "Arrivée",
+    "edit": "Modifier",
+    "loading": "Recherche du meilleur trajet…",
+    "empty_title": "Aucun trajet demandé",
+    "empty_subtitle": "Indiquez un départ et une arrivée depuis l'accueil",
+    "auth_required_title": "Connexion requise",
+    "auth_required_subtitle": "Cette fonctionnalité nécessite un compte pour l'instant",
+    "error_title": "Erreur",
+    "error_retry": "Réessayer",
+    "geocoding_pending_title": "Géocodage non disponible",
+    "geocoding_pending_subtitle": "Le service de géocodage des adresses sera branché prochainement",
+    "geocoding_try_demo": "Tester avec des coordonnées de démo",
+    "duration_total": "Durée totale",
+    "departure": "Départ",
+    "arrival": "Arrivée"
+  },
   "not_found": {
     "title": "Page introuvable",
     "back_home": "Retour à l'accueil"
