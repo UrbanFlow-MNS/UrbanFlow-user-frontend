@@ -1,5 +1,3 @@
-// TODO: brancher le retour du auth-frontend + refresh + decode user
-
 const AUTH_FRONTEND_URL = import.meta.env.VITE_AUTH_FRONTEND_URL ?? 'http://localhost:5173'
 const TOKEN_KEY = 'uf_token'
 
@@ -20,7 +18,7 @@ export function useAuth(): UseAuthReturn {
   const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null
 
   return {
-    user: null, // TODO: GET /api/user/me (endpoint à ajouter côté gateway)
+    user: null,
     token,
     isAuthenticated: !!token,
     login: () => {

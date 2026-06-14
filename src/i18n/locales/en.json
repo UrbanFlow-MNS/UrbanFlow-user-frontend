@@ -40,7 +40,10 @@
     "geocoding_try_demo": "Try with demo coordinates",
     "duration_total": "Total duration",
     "departure": "Departure",
-    "arrival": "Arrival"
+    "arrival": "Arrival",
+    "no_route_title": "No route found",
+    "no_route_subtitle": "No connection available for this trip at this time",
+    "leg_duration": "Leg duration"
   },
   "not_found": {
     "title": "Page not found",

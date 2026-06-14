@@ -5,7 +5,12 @@ import { ArrowRight, Loader2, MapPin, Navigation, LogIn, AlertCircle, Clock } fr
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/Header'
 import { useAuth } from '@/hooks/useAuth'
-import { useFastestRoute, type FastestRouteParams, type RouteSegment } from '@/api/tripPlanner'
+import {
+  useFastestRoute,
+  type FastestRouteParams,
+  type FastestRouteResponse,
+  type PlannerLeg,
+} from '@/api/tripPlanner'
 import { formatDuration, formatTime, type FormatLang } from '@/lib/format'
 import { cn } from '@/lib/utils'
 
@@ -34,8 +39,6 @@ function PlanPage() {
     parseNumberParam(searchParams.get('departureTimeSeconds')) ??
     Math.floor(Date.now() / 1000)
 
-  // TODO: brancher service de géocodage (Mapbox / OSM Nominatim)
-  // TODO: l'agencyId doit venir d'un contexte ville
   const params = useMemo<FastestRouteParams | null>(() => {
     if (
       startLat === null ||
@@ -61,7 +64,7 @@ function PlanPage() {
   const query = useFastestRoute(params)
 
   const handleTryDemo = () => {
-    const now = Math.floor(Date.now() / 1000)
+    const now = 21600
     const next = new URLSearchParams(searchParams)
     next.set('startLat', '49.1193')
     next.set('startLong', '6.1757')
@@ -269,15 +272,20 @@ function RouteResult({
   data,
   lang,
 }: {
-  data: {
-    totalDurationSeconds: number
-    departureTimeSeconds: number
-    arrivalTimeSeconds: number
-    segments: RouteSegment[]
-  }
+  data: FastestRouteResponse
   lang: FormatLang
 }) {
   const { t } = useTranslation()
+
+  if (data.length === 0) {
+    return <NoRouteState />
+  }
+
+  const firstLeg = data[0]
+  const lastLeg = data[data.length - 1]
+  const firstStop = firstLeg.trip.stops[0]
+  const lastStop = lastLeg.trip.stops[lastLeg.trip.stops.length - 1]
+  const totalDuration = lastStop.arrivalTime - firstStop.arrivalTime
 
   return (
     <div className="space-y-4">
@@ -293,7 +301,7 @@ function RouteResult({
           {t('plan.duration_total')}
         </div>
         <div className="mt-2 text-2xl font-semibold text-foreground tracking-tight">
-          {formatDuration(data.totalDurationSeconds, lang)}
+          {formatDuration(totalDuration, lang)}
         </div>
         <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
           <span>
@@ -301,7 +309,7 @@ function RouteResult({
               {t('plan.departure')}
             </span>
             <span className="text-foreground font-medium">
-              {formatTime(data.departureTimeSeconds)}
+              {formatTime(firstStop.arrivalTime)}
             </span>
           </span>
           <ArrowRight size={14} />
@@ -310,57 +318,97 @@ function RouteResult({
               {t('plan.arrival')}
             </span>
             <span className="text-foreground font-medium">
-              {formatTime(data.arrivalTimeSeconds)}
+              {formatTime(lastStop.arrivalTime)}
             </span>
           </span>
         </div>
       </div>
 
       <ol className="space-y-3">
-        {data.segments?.map((seg, idx) => (
-          <li
-            key={idx}
-            className={cn(
-              'bg-white rounded-2xl p-4 sm:p-5',
-              'border border-border/60',
-              'shadow-[0_1px_3px_rgba(0,0,0,0.04)]',
-            )}
-          >
-            <div className="flex items-center gap-3 flex-wrap">
-              <span
-                className={cn(
-                  'inline-flex items-center justify-center h-7 min-w-7 px-2 rounded-lg text-xs font-bold',
-                  !seg.lineColor && 'bg-primary text-primary-foreground',
-                )}
-                style={
-                  seg.lineColor
-                    ? { backgroundColor: seg.lineColor, color: '#fff' }
-                    : undefined
-                }
-              >
-                {seg.lineName}
-              </span>
-              <span className="text-sm font-medium text-foreground truncate">
-                {seg.fromStop}
-              </span>
-              <ArrowRight size={14} className="text-muted-foreground shrink-0" />
-              <span className="text-sm font-medium text-foreground truncate">
-                {seg.toStop}
-              </span>
-            </div>
-            <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1">
-                <Clock size={12} />
-                {formatDuration(seg.durationSeconds, lang)}
-              </span>
-              <span>
-                {formatTime(seg.departureTimeSeconds)} → {formatTime(seg.arrivalTimeSeconds)}
-              </span>
-            </div>
-          </li>
+        {data.map((leg, idx) => (
+          <LegCard key={idx} leg={leg} lang={lang} />
         ))}
       </ol>
     </div>
+  )
+}
+
+function LegCard({ leg, lang }: { leg: PlannerLeg; lang: FormatLang }) {
+  const { t } = useTranslation()
+  const stops = leg.trip.stops
+  const firstStop = stops[0]
+  const lastStop = stops[stops.length - 1]
+  const legDuration = lastStop.arrivalTime - firstStop.arrivalTime
+
+  return (
+    <li
+      className={cn(
+        'bg-white rounded-2xl p-4 sm:p-5',
+        'border border-border/60',
+        'shadow-[0_1px_3px_rgba(0,0,0,0.04)]',
+      )}
+    >
+      <div className="flex items-center gap-3 flex-wrap">
+        <span className="bg-primary text-primary-foreground rounded-lg px-2 py-1 text-xs font-semibold">
+          Ligne {leg.routeId}
+        </span>
+      </div>
+
+      <ol className="mt-4 relative">
+        {stops.map((stop, idx) => {
+          const isEndpoint = idx === 0 || idx === stops.length - 1
+          const isLast = idx === stops.length - 1
+          return (
+            <li key={stop.stopId} className="flex items-stretch gap-3">
+              <div className="w-14 shrink-0 pt-0.5 text-xs font-medium text-foreground tabular-nums text-right">
+                {formatTime(stop.arrivalTime)}
+              </div>
+              <div className="relative flex flex-col items-center">
+                <span
+                  className={cn(
+                    'mt-1 h-3 w-3 rounded-full border-2 border-primary',
+                    isEndpoint ? 'bg-primary' : 'bg-white',
+                  )}
+                />
+                {!isLast && <span className="flex-1 w-0.5 bg-primary/40 my-0.5" />}
+              </div>
+              <div className="flex-1 pb-3 text-sm text-foreground">
+                {stop.stopName}
+              </div>
+            </li>
+          )
+        })}
+      </ol>
+
+      <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground border-t border-border/60 pt-3">
+        <Clock size={12} />
+        <span className="uppercase tracking-wider">{t('plan.leg_duration')}</span>
+        <span className="text-foreground font-medium">
+          {formatDuration(legDuration, lang)}
+        </span>
+      </div>
+    </li>
+  )
+}
+
+function NoRouteState() {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  return (
+    <StateCard
+      icon={<AlertCircle size={20} />}
+      title={t('plan.no_route_title')}
+      subtitle={t('plan.no_route_subtitle')}
+      action={
+        <Button
+          onClick={() => navigate('/')}
+          variant="outline"
+          className="h-10 rounded-xl text-sm font-semibold border-border"
+        >
+          {t('plan.error_retry')}
+        </Button>
+      }
+    />
   )
 }
 

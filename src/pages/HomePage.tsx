@@ -45,7 +45,6 @@ function HomePage() {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // TODO: brancher /api/trip-planner/fastest
     const params = new URLSearchParams({ from, to })
     navigate(`/plan?${params.toString()}`)
   }

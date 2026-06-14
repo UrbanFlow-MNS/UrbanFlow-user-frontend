@@ -40,7 +40,10 @@
     "geocoding_try_demo": "Tester avec des coordonnées de démo",
     "duration_total": "Durée totale",
     "departure": "Départ",
-    "arrival": "Arrivée"
+    "arrival": "Arrivée",
+    "no_route_title": "Aucun itinéraire trouvé",
+    "no_route_subtitle": "Aucune correspondance disponible pour ce trajet à cette heure",
+    "leg_duration": "Durée du trajet"
   },
   "not_found": {
     "title": "Page introuvable",
