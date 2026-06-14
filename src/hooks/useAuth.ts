@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react'
+
 const AUTH_FRONTEND_URL = import.meta.env.VITE_AUTH_FRONTEND_URL ?? 'http://localhost:5173'
 const TOKEN_KEY = 'uf_token'
+const REFRESH_KEY = 'uf_refresh'
 
 export interface AuthUser {
   id: string
@@ -15,7 +18,25 @@ export interface UseAuthReturn {
 }
 
 export function useAuth(): UseAuthReturn {
-  const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null
+  const [token, setToken] = useState<string | null>(
+    typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null
+  )
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const hash = window.location.hash.startsWith('#')
+      ? window.location.hash.slice(1)
+      : window.location.hash
+    if (!hash) return
+    const params = new URLSearchParams(hash)
+    const hashToken = params.get('token')
+    const hashRefresh = params.get('refresh')
+    if (!hashToken) return
+    localStorage.setItem(TOKEN_KEY, hashToken)
+    if (hashRefresh) localStorage.setItem(REFRESH_KEY, hashRefresh)
+    window.history.replaceState(null, '', window.location.pathname + window.location.search)
+    setToken(hashToken)
+  }, [])
 
   return {
     user: null,
@@ -27,6 +48,8 @@ export function useAuth(): UseAuthReturn {
     },
     logout: () => {
       localStorage.removeItem(TOKEN_KEY)
+      localStorage.removeItem(REFRESH_KEY)
+      setToken(null)
       window.location.reload()
     },
   }
