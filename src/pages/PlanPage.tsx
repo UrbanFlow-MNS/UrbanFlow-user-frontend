@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, Loader2, MapPin, Navigation, LogIn, AlertCircle, Clock } from 'lucide-react'
@@ -7,6 +7,7 @@ import { Header } from '@/components/Header'
 import { useAuth } from '@/hooks/useAuth'
 import {
   useFastestRoute,
+  useGeocodeRoute,
   type FastestRouteParams,
   type FastestRouteResponse,
   type PlannerLeg,
@@ -35,9 +36,12 @@ function PlanPage() {
   const startLong = parseNumberParam(searchParams.get('startLong'))
   const endLat = parseNumberParam(searchParams.get('endLat'))
   const endLong = parseNumberParam(searchParams.get('endLong'))
-  const departureTimeSeconds =
-    parseNumberParam(searchParams.get('departureTimeSeconds')) ??
-    Math.floor(Date.now() / 1000)
+  const departureTimeSeconds = (() => {
+    const fromParam = parseNumberParam(searchParams.get('departureTimeSeconds'))
+    if (fromParam !== null && fromParam !== undefined) return fromParam
+    const now = new Date()
+    return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()
+  })()
 
   const params = useMemo<FastestRouteParams | null>(() => {
     if (
@@ -60,6 +64,21 @@ function PlanPage() {
 
   const noQuery = !from && !to && params === null
   const needsGeocoding = !!(from || to) && params === null
+
+  const geocodeQuery = useGeocodeRoute(
+    needsGeocoding && from && to ? { from, to } : null,
+  )
+
+  useEffect(() => {
+    if (!geocodeQuery.isSuccess) return
+    const { start, end } = geocodeQuery.data
+    const next = new URLSearchParams(searchParams)
+    next.set('startLat', String(start.lat))
+    next.set('startLong', String(start.lon))
+    next.set('endLat', String(end.lat))
+    next.set('endLong', String(end.lon))
+    navigate(`/plan?${next.toString()}`, { replace: true })
+  }, [geocodeQuery.isSuccess, geocodeQuery.data, navigate, searchParams])
 
   const query = useFastestRoute(params)
 
@@ -120,7 +139,13 @@ function PlanPage() {
         <div className="mt-6">
           {noQuery && <EmptyState />}
 
-          {needsGeocoding && <GeocodingPendingState onTryDemo={handleTryDemo} />}
+          {needsGeocoding && (
+            <GeocodingPendingState
+              isLoading={geocodeQuery.isLoading}
+              hasBothAddresses={!!(from && to)}
+              onTryDemo={handleTryDemo}
+            />
+          )}
 
           {params !== null && query.isLoading && <LoadingState />}
 
@@ -245,13 +270,39 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
   )
 }
 
-function GeocodingPendingState({ onTryDemo }: { onTryDemo: () => void }) {
+function GeocodingPendingState({
+  isLoading,
+  hasBothAddresses,
+  onTryDemo,
+}: {
+  isLoading: boolean
+  hasBothAddresses: boolean
+  onTryDemo: () => void
+}) {
   const { t } = useTranslation()
+
+  if (isLoading) {
+    return (
+      <StateCard
+        icon={<Loader2 size={20} className="animate-spin" />}
+        title={t('plan.geocoding_searching')}
+      />
+    )
+  }
+
   return (
     <StateCard
       icon={<MapPin size={20} />}
-      title={t('plan.geocoding_pending_title')}
-      subtitle={t('plan.geocoding_pending_subtitle')}
+      title={
+        hasBothAddresses
+          ? t('plan.geocoding_failed_title')
+          : t('plan.geocoding_pending_title')
+      }
+      subtitle={
+        hasBothAddresses
+          ? t('plan.geocoding_failed_subtitle')
+          : t('plan.geocoding_pending_subtitle')
+      }
       action={
         <Button
           onClick={onTryDemo}
