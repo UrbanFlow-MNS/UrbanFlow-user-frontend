@@ -48,6 +48,19 @@
     "no_route_subtitle": "No connection available for this trip at this time",
     "leg_duration": "Leg duration"
   },
+  "lines": {
+    "title": "Lines",
+    "subtitle": "All transport network lines",
+    "search_placeholder": "Search a line…",
+    "error_title": "Failed to load",
+    "error_subtitle": "Could not retrieve lines at this time.",
+    "error_retry": "Retry",
+    "empty_title": "No lines found",
+    "empty_subtitle": "Try a different search term.",
+    "back": "Back to lines",
+    "detail_placeholder_title": "Line detail",
+    "detail_placeholder_subtitle": "Details for line {{id}} are coming soon."
+  },
   "not_found": {
     "title": "Page not found",
     "back_home": "Back to home"

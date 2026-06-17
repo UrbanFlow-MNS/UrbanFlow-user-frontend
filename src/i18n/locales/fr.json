@@ -48,6 +48,19 @@
     "no_route_subtitle": "Aucune correspondance disponible pour ce trajet à cette heure",
     "leg_duration": "Durée du trajet"
   },
+  "lines": {
+    "title": "Lignes",
+    "subtitle": "Toutes les lignes du réseau de transport",
+    "search_placeholder": "Rechercher une ligne…",
+    "error_title": "Erreur de chargement",
+    "error_subtitle": "Impossible de récupérer les lignes pour l'instant.",
+    "error_retry": "Réessayer",
+    "empty_title": "Aucune ligne trouvée",
+    "empty_subtitle": "Essayez un autre terme de recherche.",
+    "back": "Retour aux lignes",
+    "detail_placeholder_title": "Détail de la ligne",
+    "detail_placeholder_subtitle": "Les détails de la ligne {{id}} arrivent bientôt."
+  },
   "not_found": {
     "title": "Page introuvable",
     "back_home": "Retour à l'accueil"
