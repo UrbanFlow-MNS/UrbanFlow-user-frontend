@@ -21,7 +21,8 @@
     "incidents_title": "Incidents",
     "incidents_description": "Perturbations en cours",
     "favorites_title": "Sauvegardez vos trajets",
-    "favorites_description": "Connectez-vous pour retrouver vos lignes et arrêts favoris."
+    "favorites_description": "Connectez-vous pour retrouver vos lignes et arrêts favoris.",
+    "stop_no_results": "Aucun arrêt trouvé"
   },
   "plan": {
     "title": "Itinéraire",

@@ -21,7 +21,8 @@
     "incidents_title": "Incidents",
     "incidents_description": "Ongoing disruptions",
     "favorites_title": "Save your trips",
-    "favorites_description": "Sign in to keep your favorite lines and stops."
+    "favorites_description": "Sign in to keep your favorite lines and stops.",
+    "stop_no_results": "No stop found"
   },
   "plan": {
     "title": "Route",

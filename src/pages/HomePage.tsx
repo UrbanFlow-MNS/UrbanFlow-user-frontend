@@ -5,8 +5,10 @@ import { ArrowRight, MapPin, Navigation, Route, Clock, AlertTriangle, Heart } fr
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Header } from '@/components/Header'
+import { StopAutocomplete } from '@/components/StopAutocomplete'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
+import type { Stop } from '@/api/stops'
 
 interface QuickCardProps {
   icon: React.ReactNode
@@ -42,10 +44,34 @@ function HomePage() {
 
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
+  const [fromStop, setFromStop] = useState<Stop | null>(null)
+  const [toStop, setToStop] = useState<Stop | null>(null)
+  const [time, setTime] = useState(() => {
+    const now = new Date()
+    return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+  })
+
+  function handleFromChange(name: string) {
+    setFrom(name)
+    setFromStop(null)
+  }
+
+  function handleToChange(name: string) {
+    setTo(name)
+    setToStop(null)
+  }
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const params = new URLSearchParams({ from, to })
+    const [h, m] = time.split(':').map(Number)
+    const departureTimeSeconds = h * 3600 + m * 60
+    const params = new URLSearchParams({ from, to, departureTimeSeconds: String(departureTimeSeconds) })
+    if (fromStop && toStop) {
+      params.set('startLat', String(fromStop.stopLat))
+      params.set('startLong', String(fromStop.stopLong))
+      params.set('endLat', String(toStop.stopLat))
+      params.set('endLong', String(toStop.stopLong))
+    }
     navigate(`/plan?${params.toString()}`)
   }
 
@@ -71,30 +97,38 @@ function HomePage() {
             )}
           >
             <div className="grid sm:grid-cols-2 gap-3">
-              <div className="relative">
-                <MapPin
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 pointer-events-none"
-                />
-                <Input
-                  value={from}
-                  onChange={(e) => setFrom(e.target.value)}
-                  placeholder={t('home.from_placeholder')}
-                  className="h-12 pl-9 rounded-xl border-border bg-[hsl(0_0%_98%)] placeholder:text-muted-foreground/60 focus-visible:ring-primary/30"
-                />
-              </div>
-              <div className="relative">
-                <Navigation
-                  size={16}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 pointer-events-none"
-                />
-                <Input
-                  value={to}
-                  onChange={(e) => setTo(e.target.value)}
-                  placeholder={t('home.to_placeholder')}
-                  className="h-12 pl-9 rounded-xl border-border bg-[hsl(0_0%_98%)] placeholder:text-muted-foreground/60 focus-visible:ring-primary/30"
-                />
-              </div>
+              <StopAutocomplete
+                value={from}
+                onChange={handleFromChange}
+                onSelect={(stop) => {
+                  setFrom(stop.stopName)
+                  setFromStop(stop)
+                }}
+                placeholder={t('home.from_placeholder')}
+                icon={<MapPin size={16} />}
+              />
+              <StopAutocomplete
+                value={to}
+                onChange={handleToChange}
+                onSelect={(stop) => {
+                  setTo(stop.stopName)
+                  setToStop(stop)
+                }}
+                placeholder={t('home.to_placeholder')}
+                icon={<Navigation size={16} />}
+              />
+            </div>
+            <div className="relative mt-3">
+              <Clock
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 pointer-events-none"
+              />
+              <Input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                className="h-12 pl-9 rounded-xl border-border bg-[hsl(0_0%_98%)] focus-visible:ring-primary/30"
+              />
             </div>
             <Button
               type="submit"
