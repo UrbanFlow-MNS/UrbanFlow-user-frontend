@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, MapPin, Navigation, Route, Clock, AlertTriangle, Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Header } from '@/components/Header'
 import { StopAutocomplete } from '@/components/StopAutocomplete'
+import { TimePicker } from '@/components/TimePicker'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import type { Stop } from '@/api/stops'
@@ -118,18 +118,7 @@ function HomePage() {
                 icon={<Navigation size={16} />}
               />
             </div>
-            <div className="relative mt-3">
-              <Clock
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 pointer-events-none"
-              />
-              <Input
-                type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="h-12 pl-9 rounded-xl border-border bg-[hsl(0_0%_98%)] focus-visible:ring-primary/30"
-              />
-            </div>
+            <TimePicker value={time} onChange={setTime} className="mt-3" />
             <Button
               type="submit"
               disabled={!from || !to}

@@ -75,32 +75,22 @@ export function StopAutocomplete({ value, onChange, onSelect, placeholder, icon 
           {icon}
         </span>
       )}
-      {isLoading ? (
-        <div
-          className={cn(
-            'h-12 rounded-xl border border-border bg-[hsl(0_0%_98%)]',
-            'animate-pulse',
-            icon ? 'pl-9' : '',
-          )}
-        />
-      ) : (
-        <Input
-          value={value}
-          onChange={handleInputChange}
-          onFocus={() => setOpen(true)}
-          onKeyDown={handleKeyDown}
-          placeholder={placeholder}
-          autoComplete="off"
-          aria-autocomplete="list"
-          aria-controls={listId}
-          aria-activedescendant={activeIndex >= 0 ? `${listId}-item-${activeIndex}` : undefined}
-          className={cn(
-            'h-12 rounded-xl border-border bg-[hsl(0_0%_98%)]',
-            'placeholder:text-muted-foreground/60 focus-visible:ring-primary/30',
-            icon ? 'pl-9' : '',
-          )}
-        />
-      )}
+      <Input
+        value={value}
+        onChange={handleInputChange}
+        onFocus={() => setOpen(true)}
+        onKeyDown={handleKeyDown}
+        placeholder={placeholder}
+        autoComplete="off"
+        aria-autocomplete="list"
+        aria-controls={listId}
+        aria-activedescendant={activeIndex >= 0 ? `${listId}-item-${activeIndex}` : undefined}
+        className={cn(
+          'h-12 rounded-xl border-border bg-[hsl(0_0%_98%)]',
+          'placeholder:text-muted-foreground/60 focus-visible:ring-primary/30',
+          icon ? 'pl-9' : '',
+        )}
+      />
 
       {showDropdown && (
         <ul
