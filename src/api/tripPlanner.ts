@@ -83,6 +83,19 @@ export interface PlannerTrip {
 export interface PlannerLeg {
   routeId: number
   trip: PlannerTrip
+  startStop: PlannerStop
+  endStop: PlannerStop
+  transitTimeSeconds: number
+  startWalkTimeSeconds: number
+  endWalkTimeSeconds: number
+  totalWalkTimeSeconds: number
+  totalTimeSeconds: number
+  finalArrivalTimeSeconds: number
+  formattedTotalTime: string
+  formattedTransitTime: string
+  formattedTotalWalkTime: string
+  formattedStartWalkTime: string
+  formattedEndWalkTime: string
 }
 
 export type FastestRouteResponse = PlannerLeg[]
@@ -113,6 +126,9 @@ async function fetchFastestRoute(params: FastestRouteParams): Promise<FastestRou
     const data = await apiClient<unknown>(`/api/trip-planner/fastest?${search.toString()}`)
     return data as FastestRouteResponse
   } catch (err) {
+    if (err instanceof ApiError && err.status === 404) {
+      return []
+    }
     if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
       throw new AuthRequiredError()
     }

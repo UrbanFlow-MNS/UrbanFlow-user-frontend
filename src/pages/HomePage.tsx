@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, MapPin, Navigation, Route, Clock, AlertTriangle, Heart } from 'lucide-react'
+import { ArrowRight, MapPin, Navigation, Route, Clock, AlertTriangle, Heart, LocateFixed } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/Header'
 import { StopAutocomplete } from '@/components/StopAutocomplete'
@@ -46,6 +46,8 @@ function HomePage() {
   const [to, setTo] = useState('')
   const [fromStop, setFromStop] = useState<Stop | null>(null)
   const [toStop, setToStop] = useState<Stop | null>(null)
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [isLocating, setIsLocating] = useState(false)
   const [time, setTime] = useState(() => {
     const now = new Date()
     return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
@@ -54,6 +56,21 @@ function HomePage() {
   function handleFromChange(name: string) {
     setFrom(name)
     setFromStop(null)
+    setUserLocation(null)
+  }
+
+  function handleUseMyLocation() {
+    if (!navigator.geolocation) return
+    setIsLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+        setFrom('Ma position')
+        setFromStop(null)
+        setIsLocating(false)
+      },
+      () => setIsLocating(false),
+    )
   }
 
   function handleToChange(name: string) {
@@ -66,9 +83,11 @@ function HomePage() {
     const [h, m] = time.split(':').map(Number)
     const departureTimeSeconds = h * 3600 + m * 60
     const params = new URLSearchParams({ from, to, departureTimeSeconds: String(departureTimeSeconds) })
-    if (fromStop && toStop) {
-      params.set('startLat', String(fromStop.stopLat))
-      params.set('startLong', String(fromStop.stopLong))
+    const startLat = userLocation?.lat ?? fromStop?.stopLat
+    const startLng = userLocation?.lng ?? fromStop?.stopLong
+    if (startLat != null && startLng != null && toStop) {
+      params.set('startLat', String(startLat))
+      params.set('startLong', String(startLng))
       params.set('endLat', String(toStop.stopLat))
       params.set('endLong', String(toStop.stopLong))
     }
@@ -97,26 +116,44 @@ function HomePage() {
             )}
           >
             <div className="grid sm:grid-cols-2 gap-3">
-              <StopAutocomplete
-                value={from}
-                onChange={handleFromChange}
-                onSelect={(stop) => {
-                  setFrom(stop.stopName)
-                  setFromStop(stop)
-                }}
-                placeholder={t('home.from_placeholder')}
-                icon={<MapPin size={16} />}
-              />
-              <StopAutocomplete
-                value={to}
-                onChange={handleToChange}
-                onSelect={(stop) => {
-                  setTo(stop.stopName)
-                  setToStop(stop)
-                }}
-                placeholder={t('home.to_placeholder')}
-                icon={<Navigation size={16} />}
-              />
+              <div className="flex flex-col">
+                <StopAutocomplete
+                  value={from}
+                  onChange={handleFromChange}
+                  onSelect={(stop) => {
+                    setFrom(stop.stopName)
+                    setFromStop(stop)
+                    setUserLocation(null)
+                  }}
+                  placeholder={t('home.from_placeholder')}
+                  icon={<MapPin size={16} />}
+                />
+                <button
+                  type="button"
+                  onClick={handleUseMyLocation}
+                  disabled={isLocating}
+                  className="flex items-center gap-1.5 text-xs text-primary font-medium mt-1 ml-1 hover:underline disabled:opacity-50"
+                >
+                  <LocateFixed size={12} />
+                  {userLocation !== null && from === 'Ma position'
+                    ? 'Position capturée ✓'
+                    : isLocating
+                      ? 'Localisation…'
+                      : 'Ma position'}
+                </button>
+              </div>
+              <div className="flex flex-col">
+                <StopAutocomplete
+                  value={to}
+                  onChange={handleToChange}
+                  onSelect={(stop) => {
+                    setTo(stop.stopName)
+                    setToStop(stop)
+                  }}
+                  placeholder={t('home.to_placeholder')}
+                  icon={<Navigation size={16} />}
+                />
+              </div>
             </div>
             <TimePicker value={time} onChange={setTime} className="mt-3" />
             <Button

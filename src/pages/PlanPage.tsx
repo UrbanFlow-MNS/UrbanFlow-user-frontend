@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, Loader2, MapPin, Navigation, LogIn, AlertCircle, Clock } from 'lucide-react'
+import { ArrowRight, Loader2, MapPin, Navigation, LogIn, AlertCircle, Clock, PersonStanding, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/Header'
 import { useAuth } from '@/hooks/useAuth'
@@ -334,9 +334,9 @@ function RouteResult({
 
   const firstLeg = data[0]
   const lastLeg = data[data.length - 1]
-  const firstStop = firstLeg.trip.stops[0]
-  const lastStop = lastLeg.trip.stops[lastLeg.trip.stops.length - 1]
-  const totalDuration = lastStop.arrivalTime - firstStop.arrivalTime
+  const departureTimeSeconds = firstLeg.startStop.arrivalTime - firstLeg.startWalkTimeSeconds
+  const arrivalTimeSeconds = lastLeg.finalArrivalTimeSeconds
+  const totalDuration = arrivalTimeSeconds - departureTimeSeconds
 
   return (
     <div className="space-y-4">
@@ -360,7 +360,7 @@ function RouteResult({
               {t('plan.departure')}
             </span>
             <span className="text-foreground font-medium">
-              {formatTime(firstStop.arrivalTime)}
+              {formatTime(departureTimeSeconds)}
             </span>
           </span>
           <ArrowRight size={14} />
@@ -369,7 +369,7 @@ function RouteResult({
               {t('plan.arrival')}
             </span>
             <span className="text-foreground font-medium">
-              {formatTime(lastStop.arrivalTime)}
+              {formatTime(arrivalTimeSeconds)}
             </span>
           </span>
         </div>
@@ -377,19 +377,21 @@ function RouteResult({
 
       <ol className="space-y-3">
         {data.map((leg, idx) => (
-          <LegCard key={idx} leg={leg} lang={lang} />
+          <LegCard key={idx} leg={leg} />
         ))}
       </ol>
     </div>
   )
 }
 
-function LegCard({ leg, lang }: { leg: PlannerLeg; lang: FormatLang }) {
+function LegCard({ leg }: { leg: PlannerLeg }) {
   const { t } = useTranslation()
-  const stops = leg.trip.stops
-  const firstStop = stops[0]
-  const lastStop = stops[stops.length - 1]
-  const legDuration = lastStop.arrivalTime - firstStop.arrivalTime
+
+  const transitStops = leg.trip.stops.filter(
+    (s) =>
+      s.sequenceOrder >= leg.startStop.sequenceOrder &&
+      s.sequenceOrder <= leg.endStop.sequenceOrder,
+  )
 
   return (
     <li
@@ -405,10 +407,48 @@ function LegCard({ leg, lang }: { leg: PlannerLeg; lang: FormatLang }) {
         </span>
       </div>
 
-      <ol className="mt-4 relative">
-        {stops.map((stop, idx) => {
-          const isEndpoint = idx === 0 || idx === stops.length - 1
-          const isLast = idx === stops.length - 1
+      {leg.startWalkTimeSeconds > 0 && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground py-2 px-1 mt-3">
+          <PersonStanding size={12} />
+          <span>{leg.formattedStartWalkTime} à pied</span>
+          <ArrowRight size={10} />
+          <span className="font-medium text-foreground">{leg.startStop.stopName}</span>
+          <button
+            type="button"
+            onClick={() => {
+              const { latitude, longitude } = leg.startStop
+              const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+              const openMaps = (originLat?: number, originLng?: number) => {
+                if (isIOS) {
+                  const saddr = originLat != null ? `saddr=${originLat},${originLng}&` : ''
+                  window.open(`maps://maps.apple.com/?${saddr}daddr=${latitude},${longitude}&dirflg=w`, '_blank')
+                } else {
+                  const origin = originLat != null ? `&origin=${originLat},${originLng}` : ''
+                  window.open(`https://www.google.com/maps/dir/?api=1${origin}&destination=${latitude},${longitude}&travelmode=walking`, '_blank')
+                }
+              }
+              if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                  (pos) => openMaps(pos.coords.latitude, pos.coords.longitude),
+                  () => openMaps(),
+                  { timeout: 4000 },
+                )
+              } else {
+                openMaps()
+              }
+            }}
+            className="ml-auto shrink-0 flex items-center gap-1 text-primary hover:underline"
+          >
+            <ExternalLink size={11} />
+            <span>Maps</span>
+          </button>
+        </div>
+      )}
+
+      <ol className={cn('relative', leg.startWalkTimeSeconds > 0 ? 'mt-1' : 'mt-4')}>
+        {transitStops.map((stop, idx) => {
+          const isEndpoint = idx === 0 || idx === transitStops.length - 1
+          const isLast = idx === transitStops.length - 1
           return (
             <li key={stop.stopId} className="flex items-stretch gap-3">
               <div className="w-14 shrink-0 pt-0.5 text-xs font-medium text-foreground tabular-nums text-right">
@@ -431,12 +471,28 @@ function LegCard({ leg, lang }: { leg: PlannerLeg; lang: FormatLang }) {
         })}
       </ol>
 
+      {leg.endWalkTimeSeconds > 0 && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground py-2 px-1">
+          <PersonStanding size={12} />
+          <span>{leg.formattedEndWalkTime} à pied</span>
+          <ArrowRight size={10} />
+          <span className="font-medium text-foreground">{leg.endStop.stopName}</span>
+        </div>
+      )}
+
       <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground border-t border-border/60 pt-3">
         <Clock size={12} />
         <span className="uppercase tracking-wider">{t('plan.leg_duration')}</span>
         <span className="text-foreground font-medium">
-          {formatDuration(legDuration, lang)}
+          {leg.formattedTransitTime}
         </span>
+        {leg.totalWalkTimeSeconds > 0 && (
+          <>
+            <span className="text-border/80">·</span>
+            <PersonStanding size={12} />
+            <span className="text-foreground font-medium">{leg.formattedTotalWalkTime}</span>
+          </>
+        )}
       </div>
     </li>
   )
