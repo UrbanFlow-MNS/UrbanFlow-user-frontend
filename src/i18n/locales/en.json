@@ -62,6 +62,16 @@
     "detail_placeholder_title": "Line detail",
     "detail_placeholder_subtitle": "Details for line {{id}} are coming soon."
   },
+  "stops": {
+    "title": "Stops",
+    "subtitle": "All transport network stops",
+    "search_placeholder": "Search a stop…",
+    "error_title": "Failed to load",
+    "error_subtitle": "Could not retrieve stops at this time.",
+    "error_retry": "Retry",
+    "empty_title": "No stops found",
+    "empty_subtitle": "Try a different search term."
+  },
   "not_found": {
     "title": "Page not found",
     "back_home": "Back to home"

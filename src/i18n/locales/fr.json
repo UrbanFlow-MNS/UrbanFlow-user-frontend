@@ -62,6 +62,16 @@
     "detail_placeholder_title": "Détail de la ligne",
     "detail_placeholder_subtitle": "Les détails de la ligne {{id}} arrivent bientôt."
   },
+  "stops": {
+    "title": "Arrêts",
+    "subtitle": "Tous les arrêts du réseau de transport",
+    "search_placeholder": "Rechercher un arrêt…",
+    "error_title": "Erreur de chargement",
+    "error_subtitle": "Impossible de récupérer les arrêts pour l'instant.",
+    "error_retry": "Réessayer",
+    "empty_title": "Aucun arrêt trouvé",
+    "empty_subtitle": "Essayez un autre terme de recherche."
+  },
   "not_found": {
     "title": "Page introuvable",
     "back_home": "Retour à l'accueil"
