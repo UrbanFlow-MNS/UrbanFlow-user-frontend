@@ -72,6 +72,24 @@
     "empty_title": "No stops found",
     "empty_subtitle": "Try a different search term."
   },
+  "calendar": {
+    "title": "Schedule",
+    "subtitle": "Browse timetables by line",
+    "search_placeholder": "Search a line…",
+    "error_title": "Failed to load",
+    "error_subtitle": "Could not retrieve lines at this time.",
+    "error_retry": "Retry",
+    "empty_title": "No lines found",
+    "empty_subtitle": "Try a different search term.",
+    "back": "All lines",
+    "trips_loading": "Loading timetable…",
+    "trips_error_title": "Failed to load",
+    "trips_error_subtitle": "Could not retrieve the timetable at this time.",
+    "trips_error_retry": "Retry",
+    "no_trips": "No timetable available for this line.",
+    "stops_count": "{{count}} stop",
+    "stops_count_plural": "{{count}} stops"
+  },
   "not_found": {
     "title": "Page not found",
     "back_home": "Back to home"

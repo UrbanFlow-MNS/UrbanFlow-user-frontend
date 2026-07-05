@@ -72,6 +72,24 @@
     "empty_title": "Aucun arrêt trouvé",
     "empty_subtitle": "Essayez un autre terme de recherche."
   },
+  "calendar": {
+    "title": "Horaires",
+    "subtitle": "Consultez les horaires de passage par ligne",
+    "search_placeholder": "Rechercher une ligne…",
+    "error_title": "Erreur de chargement",
+    "error_subtitle": "Impossible de récupérer les lignes pour l'instant.",
+    "error_retry": "Réessayer",
+    "empty_title": "Aucune ligne trouvée",
+    "empty_subtitle": "Essayez un autre terme de recherche.",
+    "back": "Toutes les lignes",
+    "trips_loading": "Chargement des horaires…",
+    "trips_error_title": "Erreur de chargement",
+    "trips_error_subtitle": "Impossible de récupérer les horaires pour l'instant.",
+    "trips_error_retry": "Réessayer",
+    "no_trips": "Aucun horaire disponible pour cette ligne.",
+    "stops_count": "{{count}} arrêt",
+    "stops_count_plural": "{{count}} arrêts"
+  },
   "not_found": {
     "title": "Page introuvable",
     "back_home": "Retour à l'accueil"
