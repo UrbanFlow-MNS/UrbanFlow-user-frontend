@@ -5,6 +5,7 @@ import LinesPage from '@/pages/LinesPage'
 import LineDetailPage from '@/pages/LineDetailPage'
 import StopsPage from '@/pages/StopsPage'
 import CalendarPage from '@/pages/CalendarPage'
+import IncidentsPage from '@/pages/IncidentsPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Route path="/lines/:id" element={<LineDetailPage />} />
       <Route path="/stops" element={<StopsPage />} />
       <Route path="/calendar" element={<CalendarPage />} />
+      <Route path="/incidents" element={<IncidentsPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )

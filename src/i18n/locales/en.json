@@ -90,6 +90,32 @@
     "stops_count": "{{count}} stop",
     "stops_count_plural": "{{count}} stops"
   },
+  "incidents": {
+    "title": "Incidents",
+    "subtitle": "Ongoing disruptions on the network",
+    "search_placeholder": "Search an incident…",
+    "status": {
+      "OPEN": "Open",
+      "IN_PROGRESS": "In progress",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed"
+    },
+    "priority": {
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High",
+      "URGENT": "Urgent"
+    },
+    "loading": "Loading incidents…",
+    "error_title": "Failed to load",
+    "error_subtitle": "Could not retrieve incidents at this time.",
+    "error_retry": "Retry",
+    "empty_title": "No active incidents",
+    "empty_subtitle": "The network is running normally.",
+    "no_results_title": "No results",
+    "no_results_subtitle": "Try a different search term.",
+    "duration_estimate": "≈ {{minutes}} min"
+  },
   "not_found": {
     "title": "Page not found",
     "back_home": "Back to home"
