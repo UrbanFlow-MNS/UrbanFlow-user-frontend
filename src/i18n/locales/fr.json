@@ -90,6 +90,32 @@
     "stops_count": "{{count}} arrêt",
     "stops_count_plural": "{{count}} arrêts"
   },
+  "incidents": {
+    "title": "Incidents",
+    "subtitle": "Perturbations en cours sur le réseau",
+    "search_placeholder": "Rechercher un incident…",
+    "status": {
+      "OPEN": "Ouvert",
+      "IN_PROGRESS": "En cours",
+      "RESOLVED": "Résolu",
+      "CLOSED": "Clôturé"
+    },
+    "priority": {
+      "LOW": "Faible",
+      "MEDIUM": "Moyenne",
+      "HIGH": "Élevée",
+      "URGENT": "Urgente"
+    },
+    "loading": "Chargement des incidents…",
+    "error_title": "Erreur de chargement",
+    "error_subtitle": "Impossible de récupérer les incidents pour l'instant.",
+    "error_retry": "Réessayer",
+    "empty_title": "Aucun incident en cours",
+    "empty_subtitle": "Le réseau fonctionne normalement.",
+    "no_results_title": "Aucun résultat",
+    "no_results_subtitle": "Essayez un autre terme de recherche.",
+    "duration_estimate": "≈ {{minutes}} min"
+  },
   "not_found": {
     "title": "Page introuvable",
     "back_home": "Retour à l'accueil"
